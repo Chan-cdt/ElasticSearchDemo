@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <!--<property name="logPath" value="${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}" />-->
+
+    <property name="LOG_PATH" value="${WECHAT_SERVER_PATH}/logs/"/>
+    <!-- <property name="CONSOLE_LOG_PATTERN" value="${CONSOLE_LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(-&#45;&#45;){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>-->
+
+    <!-- 控制台日志 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>{"webapp":"wx","@timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}","trace":"%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}","level":"%p","thread":"%t","class":"%logger","Content":"%m"}%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE_INFO" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_PATH}/wx.log</file>
+        <append>true</append>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <FileNamePattern>${LOG_PATH}/wx.log.%d{yyyy-MM-dd}.log</FileNamePattern>
+            <!-- 最大保存时间 -->
+            <maxHistory>60</maxHistory>
+            <!--设置为true才会删除历史文件-->
+            <cleanHistoryOnStart>false</cleanHistoryOnStart>
+        </rollingPolicy>
+        <encoder>
+            <pattern>{"webapp":"wx","@timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ}","trace":"%X{X-B3-TraceId:-},%X{X-B3-SpanId:-}","level":"%p","thread":"%t","class":"%logger","Content":"%m"}%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" level="INFO" />
+    <logger name="com.cdt" level="INFO" />
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+    </root>
+
+</configuration>
